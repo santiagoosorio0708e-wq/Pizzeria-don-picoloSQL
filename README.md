@@ -17,6 +17,18 @@ La base de datos contiene las siguientes tablas principales:
 - **domicilios**: Detalles de cada entrega (hora de salida, entrega, distancia y costo).
 - **historial_precios**: Tabla de auditoría alimentada por un trigger para guardar el historial de cambios en el precio de las pizzas.
 
+### Diagrama de Entidad-Relación
+
+![Esquema Base de Datos](./img/esquemadrawsql.png)
+
+### Explicación de Relaciones
+- **Clientes y Pedidos (1:N)**: Un cliente puede realizar múltiples pedidos a lo largo del tiempo, pero cada pedido pertenece a un único cliente.
+- **Pizzas e Ingredientes (M:N)**: Una pizza está compuesta por varios ingredientes, y a su vez, un ingrediente puede formar parte de diferentes pizzas. Esta relación de muchos a muchos se resuelve a través de la tabla intermedia `pizza_ingredientes`.
+- **Pedidos y Pizzas (M:N)**: Un pedido puede incluir una o varias pizzas, y una pizza puede estar presente en múltiples pedidos. Se resuelve con la tabla intermedia `pedido_pizzas`.
+- **Pedidos y Domicilios (1:1)**: Cada pedido para entrega a domicilio tiene asociado un único registro de envío en la tabla `domicilios`.
+- **Repartidores y Domicilios (1:N)**: Un repartidor puede realizar múltiples entregas de domicilios, pero cada domicilio es entregado por un solo repartidor.
+- **Pizzas e Historial de Precios (1:N)**: Cuando se actualiza el precio de una pizza, el trigger inserta un registro histórico. Una pizza puede tener múltiples cambios registrados en su historial.
+
 ## Scripts del Proyecto
 - `database.sql`: Creación de la base de datos, tablas y llaves foráneas.
 - `funciones.sql`: Funciones para cálculo de totales, ganancias y procedimientos de actualización.
