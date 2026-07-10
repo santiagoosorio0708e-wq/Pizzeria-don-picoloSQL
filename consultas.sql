@@ -41,8 +41,7 @@ FROM clientes
 WHERE id_cliente IN (
     SELECT id_cliente
     FROM pedidos
-    WHERE MONTH(fecha_hora) = MONTH(CURRENT_DATE()) 
-      AND YEAR(fecha_hora) = YEAR(CURRENT_DATE())
     GROUP BY id_cliente
     HAVING COUNT(id_pedido) > 5
 );
+

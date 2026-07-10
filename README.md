@@ -86,19 +86,18 @@ WHERE nombre LIKE '%Queso%';
 ```
 
 ### 7. Subconsulta para obtener los clientes frecuentes (más de 5 pedidos mensuales)
-Identifica los clientes que han registrado más de 5 pedidos durante el mes actual a través de una subconsulta.
+Identifica los clientes que han registrado más de 5 pedidos a través de una subconsulta.
 ```sql
 SELECT nombre, telefono, correo_electronico
 FROM clientes
 WHERE id_cliente IN (
     SELECT id_cliente
     FROM pedidos
-    WHERE MONTH(fecha_hora) = MONTH(CURRENT_DATE()) 
-      AND YEAR(fecha_hora) = YEAR(CURRENT_DATE())
     GROUP BY id_cliente
     HAVING COUNT(id_pedido) > 5
 );
 ```
+
 
 ## Instrucciones para ejecutar el script
 1. Abre tu cliente de base de datos preferido (MySQL Workbench, DBeaver, o consola de MySQL).
