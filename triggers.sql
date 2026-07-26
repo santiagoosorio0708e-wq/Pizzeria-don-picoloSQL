@@ -64,13 +64,11 @@ AFTER UPDATE ON pedidos
 FOR EACH ROW
 BEGIN
     IF OLD.estado <> NEW.estado AND NEW.estado = 'cancelado' THEN
-        -- 1. Liberar repartidor si estaba asignado
         UPDATE repartidores r
         INNER JOIN domicilios d ON r.id_repartidor = d.id_repartidor
         SET r.estado = 'disponible'
         WHERE d.id_pedido = NEW.id_pedido;
 
-        -- 2. Devolver stock de ingredientes
         UPDATE ingredientes i
         INNER JOIN pizza_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
         INNER JOIN pedido_pizzas pp ON pi.id_pizza = pp.id_pizza

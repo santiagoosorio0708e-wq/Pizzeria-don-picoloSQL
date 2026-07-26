@@ -1,6 +1,5 @@
 USE pizzeria_don_piccolo;
 
--- Vista de resumen de pedidos por cliente
 CREATE OR REPLACE VIEW vista_resumen_clientes AS
 SELECT 
     c.nombre AS cliente,
@@ -10,7 +9,6 @@ FROM clientes c
 LEFT JOIN pedidos p ON c.id_cliente = p.id_cliente
 GROUP BY c.id_cliente, c.nombre;
 
--- Vista de desempeño de repartidores
 CREATE OR REPLACE VIEW vista_desempeno_repartidores AS
 SELECT 
     r.nombre AS repartidor,
@@ -22,7 +20,6 @@ JOIN domicilios d ON r.id_repartidor = d.id_repartidor
 WHERE d.hora_entrega IS NOT NULL
 GROUP BY r.id_repartidor, r.nombre, r.zona_asignada;
 
--- Vista de stock de ingredientes por debajo del mínimo
 CREATE OR REPLACE VIEW vista_stock_critico AS
 SELECT 
     nombre AS ingrediente,
@@ -31,7 +28,6 @@ SELECT
 FROM ingredientes
 WHERE stock < stock_minimo;
 
--- Vista de pedidos pendientes de despacho (solo clientes activos)
 CREATE OR REPLACE VIEW vista_pedidos_pendientes_despacho AS
 SELECT 
     p.id_pedido,
@@ -46,7 +42,6 @@ FROM pedidos p
 JOIN clientes c ON p.id_cliente = c.id_cliente
 WHERE p.estado IN ('pendiente', 'en preparación') AND c.activo = 1;
 
--- Vista analítica de rendimiento mensual de ventas por pizza
 CREATE OR REPLACE VIEW vista_rendimiento_mensual_pizzas AS
 SELECT 
     YEAR(p.fecha_hora) AS anio,
