@@ -2,6 +2,23 @@ USE pizzeria_don_piccolo;
 
 DELIMITER //
 
+CREATE FUNCTION calcular_descuento_cliente(p_id_cliente INT)
+RETURNS DECIMAL(5,2)
+DETERMINISTIC
+BEGIN
+    DECLARE total_pedidos INT DEFAULT 0;
+    
+    SELECT COUNT(*) INTO total_pedidos
+    FROM pedidos
+    WHERE id_cliente = p_id_cliente AND estado = 'entregado';
+    
+    IF total_pedidos >= 5 THEN
+        RETURN 0.10;
+    ELSE
+        RETURN 0.00;
+    END IF;
+END //
+
 CREATE FUNCTION calcular_total_pedido(p_id_pedido INT) 
 RETURNS DECIMAL(10,2)
 DETERMINISTIC
@@ -10,6 +27,12 @@ BEGIN
     DECLARE costo_envio DECIMAL(10,2) DEFAULT 0;
     DECLARE iva DECIMAL(10,2) DEFAULT 0.19;
     DECLARE total_final DECIMAL(10,2) DEFAULT 0;
+    DECLARE v_id_cliente INT;
+    DECLARE v_descuento DECIMAL(5,2) DEFAULT 0.00;
+
+    SELECT id_cliente INTO v_id_cliente FROM pedidos WHERE id_pedido = p_id_pedido;
+
+    SET v_descuento = calcular_descuento_cliente(v_id_cliente);
 
     SELECT COALESCE(SUM(cantidad * precio_unitario), 0) INTO total_pizzas
     FROM pedido_pizzas
@@ -19,7 +42,7 @@ BEGIN
     FROM domicilios
     WHERE id_pedido = p_id_pedido;
 
-    SET total_final = (total_pizzas + costo_envio) * (1 + iva);
+    SET total_final = (total_pizzas * (1 - v_descuento) + costo_envio) * (1 + iva);
 
     RETURN total_final;
 END //
@@ -126,11 +149,7 @@ BEGIN
         SET MESSAGE_TEXT = CONCAT('Error: Stock insuficiente para el ingrediente: ', v_nombre_ingrediente);
     END IF;
 
-    SELECT COALESCE(SUM(cantidad * precio_unitario), 0) INTO v_total
-    FROM pedido_pizzas
-    WHERE id_pedido = v_id_pedido;
-
-    SET v_total = v_total * 1.19;
+    SET v_total = calcular_total_pedido(v_id_pedido);
 
     UPDATE pedidos
     SET total_pedido = v_total
@@ -239,6 +258,27 @@ BEGIN
     WHERE id_pedido = p_id_pedido;
 
     COMMIT;
+END //
+
+CREATE FUNCTION calcular_comision_repartidor(
+    p_id_repartidor INT,
+    p_mes INT,
+    p_anio INT
+)
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+    DECLARE v_comision DECIMAL(10,2) DEFAULT 0.00;
+
+    SELECT COALESCE(SUM(1500.00 + (distancia_km * 500.00)), 0.00) INTO v_comision
+    FROM domicilios d
+    JOIN pedidos p ON d.id_pedido = p.id_pedido
+    WHERE d.id_repartidor = p_id_repartidor
+      AND p.estado = 'entregado'
+      AND MONTH(d.hora_entrega) = p_mes
+      AND YEAR(d.hora_entrega) = p_anio;
+
+    RETURN v_comision;
 END //
 
 DELIMITER ;

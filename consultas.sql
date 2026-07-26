@@ -150,3 +150,8 @@ CALL cancelar_pedido(6);
 SELECT nombre, stock FROM ingredientes;
 SELECT id_repartidor, estado FROM repartidores WHERE id_repartidor = 1;
 SELECT * FROM pedidos WHERE id_pedido = 6;
+
+SELECT calcular_descuento_cliente(3) AS descuento_cliente_frecuente;
+SELECT calcular_descuento_cliente(1) AS descuento_cliente_comun;
+
+SELECT calcular_comision_repartidor(1, MONTH(NOW()), YEAR(NOW())) AS comisiones_repartidor_1;
