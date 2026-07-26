@@ -6,7 +6,8 @@ CREATE TABLE clientes (
     nombre VARCHAR(100) NOT NULL,
     telefono VARCHAR(20) NOT NULL,
     direccion VARCHAR(200) NOT NULL,
-    correo_electronico VARCHAR(100) UNIQUE NOT NULL
+    correo_electronico VARCHAR(100) UNIQUE NOT NULL,
+    activo TINYINT(1) NOT NULL DEFAULT 1
 );
 
 CREATE TABLE pizzas (
@@ -79,4 +80,15 @@ CREATE TABLE historial_precios (
     precio_nuevo DECIMAL(10,2) NOT NULL,
     fecha_cambio DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_pizza) REFERENCES pizzas(id_pizza) ON DELETE CASCADE
+);
+
+CREATE TABLE auditoria_clientes (
+    id_auditoria INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    campo_modificado VARCHAR(50) NOT NULL,
+    valor_anterior TEXT,
+    valor_nuevo TEXT,
+    fecha_cambio DATETIME DEFAULT CURRENT_TIMESTAMP,
+    usuario VARCHAR(100),
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE
 );

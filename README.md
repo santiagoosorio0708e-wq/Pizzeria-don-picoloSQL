@@ -138,6 +138,124 @@ WHERE id_cliente IN (
 
 ---
 
+### 8. Cantidad de entregas por repartidor
+Muestra el total acumulado de domicilios despachados por cada repartidor registrado.
+```sql
+SELECT r.id_repartidor, r.nombre, COUNT(d.id_domicilio) AS total_entregas
+FROM repartidores r
+LEFT JOIN domicilios d ON r.id_repartidor = d.id_repartidor
+GROUP BY r.id_repartidor, r.nombre
+ORDER BY total_entregas DESC;
+```
+* **Resultado**: Entrega la métrica de cuántas entregas exitosas u ordenadas ha realizado cada miembro del equipo de reparto.
+
+---
+
+### 9. Entregas a domicilio por pizza del menú
+Calcula cuántas entregas se han realizado agrupado por cada tipo/nombre de pizza.
+```sql
+SELECT pz.nombre AS pizza, COUNT(DISTINCT d.id_domicilio) AS total_domicilios_entregados
+FROM pizzas pz
+JOIN pedido_pizzas pp ON pz.id_pizza = pp.id_pizza
+JOIN pedidos p ON pp.id_pedido = p.id_pedido
+JOIN domicilios d ON p.id_pedido = d.id_pedido
+WHERE p.estado = 'entregado'
+GROUP BY pz.id_pizza, pz.nombre
+ORDER BY total_domicilios_entregados DESC;
+```
+* **Resultado**: Ranking de pizzas de acuerdo a su frecuencia en los pedidos despachados a domicilio.
+
+---
+
+### 10. Ingresos y cantidad de pedidos por método de pago
+Permite analizar los métodos de pago preferidos de los clientes y los ingresos totales que reporta cada uno.
+```sql
+SELECT metodo_pago, COUNT(id_pedido) AS total_pedidos, SUM(total_pedido) AS ingresos_totales
+FROM pedidos
+WHERE estado = 'entregado'
+GROUP BY metodo_pago
+ORDER BY ingresos_totales DESC;
+```
+* **Resultado**: Consolidado de transacciones exitosas y facturación según efectivo, tarjeta o app.
+
+---
+
+### 11. Clientes frecuentes con múltiples domicilios
+Identifica a los clientes que han requerido entregas a domicilio más de una vez.
+```sql
+SELECT c.nombre AS cliente, COUNT(d.id_domicilio) AS total_domicilios
+FROM clientes c
+JOIN pedidos p ON c.id_cliente = p.id_cliente
+JOIN domicilios d ON p.id_pedido = d.id_pedido
+GROUP BY c.id_cliente, c.nombre
+HAVING total_domicilios > 1
+ORDER BY total_domicilios DESC;
+```
+* **Resultado**: Listado de clientes frecuentes en la modalidad de entrega a domicilio.
+
+---
+
+### 12. Consumo acumulado de ingredientes en pedidos entregados
+Calcula el desgaste real del inventario considerando las cantidades asociadas a cada receta de pizza despachada.
+```sql
+SELECT i.nombre AS ingrediente, SUM(pi.cantidad * pp.cantidad) AS cantidad_usada
+FROM ingredientes i
+JOIN pizza_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
+JOIN pedido_pizzas pp ON pi.id_pizza = pp.id_pizza
+JOIN pedidos p ON pp.id_pedido = p.id_pedido
+WHERE p.estado = 'entregado'
+GROUP BY i.id_ingrediente, i.nombre
+ORDER BY cantidad_usada DESC;
+```
+* **Resultado**: Muestra la cantidad total de cada ingrediente consumido y facturado en pizzas entregadas.
+
+---
+
+### 13. Ranking de Clientes VIP
+Encuentra a los 3 mejores clientes activos basándose en su gasto histórico acumulado.
+```sql
+SELECT c.id_cliente, c.nombre, SUM(p.total_pedido) AS total_gastado, COUNT(p.id_pedido) AS total_pedidos
+FROM clientes c
+JOIN pedidos p ON c.id_cliente = p.id_cliente
+WHERE p.estado = 'entregado' AND c.activo = 1
+GROUP BY c.id_cliente, c.nombre
+ORDER BY total_gastado DESC
+LIMIT 3;
+```
+* **Resultado**: Reporte de los tres clientes que mayor rentabilidad generan para el negocio.
+
+---
+
+### 14. Reporte de compra sugerida de insumos
+Indica qué ingredientes se encuentran por debajo del stock mínimo y sugiere la cantidad de compra necesaria para alcanzar un nivel óptimo.
+```sql
+SELECT 
+    nombre AS ingrediente,
+    stock AS stock_actual,
+    stock_minimo,
+    (stock_minimo * 2) AS stock_sugerido_optimo,
+    ((stock_minimo * 2) - stock) AS cantidad_a_comprar
+FROM ingredientes
+WHERE stock < stock_minimo;
+```
+* **Resultado**: Listado de insumos críticos con recomendaciones cuantitativas de reposición.
+
+---
+
+### 15. Promedio de pizzas por pedido
+Calcula el tamaño medio del pedido de los clientes (unidades de pizza por ticket).
+```sql
+SELECT AVG(cantidad_de_pizzas) AS promedio_pizzas_por_pedido
+FROM (
+    SELECT id_pedido, SUM(cantidad) AS cantidad_de_pizzas
+    FROM pedido_pizzas
+    GROUP BY id_pedido
+) AS subconsulta;
+```
+* **Resultado**: Indica la media de pizzas contenidas por cada transacción.
+
+---
+
 ## Pruebas de Funciones, Triggers y Vistas
 
 A continuación se presentan las evidencias de las pruebas unitarias realizadas para verificar el correcto funcionamiento de las funciones, triggers y vistas:
