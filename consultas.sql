@@ -45,10 +45,6 @@ WHERE id_cliente IN (
     HAVING COUNT(id_pedido) > 5
 );
 
--- =========================================================================
--- CONSULTAS ADICIONALES DE ANALÍTICA Y CONTROL (MÁS CONSULTAS FUNCIONALES)
--- =========================================================================
-
 -- 8. Cantidad de entregas a domicilio realizadas por cada repartidor
 SELECT r.id_repartidor, r.nombre, COUNT(d.id_domicilio) AS total_entregas
 FROM repartidores r
@@ -121,11 +117,7 @@ FROM (
 ) AS subconsulta;
 
 
--- =========================================================================
--- PRUEBAS DE EXAMEN - TRANSACCIONES Y GESTIÓN DE ERRORES (PROCEDIMIENTO REGISTRAR_PEDIDO_COMPLETO)
--- =========================================================================
-
--- Caso 1: Compra Exitosa (Hay stock de todos los ingredientes)
+-- Pruebas de funcionamiento - Registrar pedido completo
 -- Insertamos un pedido para el cliente 1 (Juan Perez) comprando 1 Pizza Pepperoni Clásica (id: 3)
 SELECT '--- PRUEBA 1: COMPRA EXITOSA ---' AS log;
 SELECT stock INTO @stock_previo_queso FROM ingredientes WHERE id_ingrediente = 1;
@@ -160,11 +152,7 @@ SELECT COUNT(*) INTO @detalles_antes FROM pedido_pizzas;
 -- SELECT COUNT(*) AS detalles_actuales, @detalles_antes AS detalles_anteriores FROM pedido_pizzas;
 
 
--- =========================================================================
--- PRUEBAS DE EXAMEN - BORRADO LÓGICO Y AUDITORÍA DE CLIENTES
--- =========================================================================
-
--- Caso 1: Actualización de datos de un cliente (Dispara tr_auditoria_clientes)
+-- Pruebas de funcionamiento - Borrado lógico y auditoría
 SELECT '--- PRUEBA 3: MODIFICACIÓN DE CLIENTE (AUDITORÍA) ---' AS log;
 UPDATE clientes 
 SET telefono = '555-9999', direccion = 'Nueva Avenida Principal # 123'
@@ -188,11 +176,7 @@ SELECT id_cliente, nombre, activo FROM clientes WHERE id_cliente = 4;
 SELECT * FROM vista_pedidos_pendientes_despacho;
 
 
--- =========================================================================
--- PRUEBAS DE EXAMEN - DESPACHO AUTOMATIZADO Y ASIGNACIÓN DE REPARTIDORES
--- =========================================================================
-
--- Caso 1: Despacho Exitoso
+-- Pruebas de funcionamiento - Despacho automatizado
 SELECT '--- PRUEBA 5: DESPACHO EXITOSO DE PEDIDO ---' AS log;
 -- Consultamos el estado inicial del primer repartidor disponible y del pedido
 SELECT id_repartidor, nombre, estado FROM repartidores WHERE estado = 'disponible' LIMIT 1;
