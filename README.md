@@ -312,3 +312,43 @@ A continuación se presentan las evidencias de las pruebas unitarias realizadas 
    - `vistas.sql`
    - `datos_prueba.sql` (para poblar la base de datos con información de pruebas)
    - `consultas.sql` (para probar el comportamiento de las consultas)
+
+---
+
+## Módulos Adicionales de Análisis Integrados
+
+El repositorio incluye la solución para **4 variantes o módulos de análisis** basados en la estructura unificada de la base de datos. Las consultas y vistas específicas de cada módulo se encuentran debidamente etiquetadas en [consultas.sql](file:///c:/Users/osori/Desktop/proyecto%20sql-2/pizzeria-don-piccolo/consultas.sql) y [vistas.sql](file:///c:/Users/osori/Desktop/proyecto%20sql-2/pizzeria-don-piccolo/vistas.sql) bajo comentarios aclaratorios:
+
+### Módulo 1: Sistema de Domicilios y Repartidores
+* **Objetivo:** Analizar el flujo de entregas a domicilio y desempeño de repartidores.
+* **Consultas:** 
+  1. *Entregas por repartidor:* Total de entregas con estado 'entregado' y monto total acumulado.
+  2. *Pedidos demorados:* Aquellos con duración mayor a 40 minutos.
+  3. *Repartidores disponibles:* Repartidores activos sin entregas asociadas.
+* **Vistas:** `vista_desempeno_repartidor`.
+
+### Módulo 2: Inventario, Ingredientes y Recetas
+* **Objetivo:** Evaluar la relación de muchos a muchos entre pizzas e ingredientes y control de stock.
+* **Consultas:**
+  1. *Ingredientes distintos por pizza:* Conteo de insumos en la receta.
+  2. *Alerta de stock crítico:* Insumos bajo el límite y cálculo de compra sugerida.
+  3. *Ingredientes sin uso:* Elementos del almacén que no pertenecen a ninguna pizza del menú.
+* **Vistas:** `vista_inventario_critico`.
+
+### Módulo 3: Menú de Pizzas e Historial de Precios
+* **Objetivo:** Auditar cambios de precios y evaluar el comportamiento de la oferta de productos.
+* **Consultas:**
+  1. *Resumen de precios:* Precio promedio y máximo por tipo y tamaño.
+  2. *Auditoría de incrementos:* Cambios históricos de precios donde la diferencia superó los 5,000.
+  3. *Pizzas no vendidas:* Productos del catálogo que nunca han figurado en un pedido.
+* **Vistas:** `vista_resumen_precios`.
+
+### Módulo 4: Ventas y Fidelización de Clientes
+* **Objetivo:** Analizar el consumo, identificar clientes VIP y detectar usuarios inactivos.
+* **Consultas:**
+  1. *Consumo por cliente:* Cantidad de transacciones e ingresos generados.
+  2. *Clientes VIP:* Clientes con compras acumuladas mayores a 50,000.
+  3. *Clientes inactivos:* Clientes registrados en el sistema que aún no tienen compras.
+* **Vistas:** `vista_resumen_clientes` (incluida en el núcleo del proyecto).
+
+
