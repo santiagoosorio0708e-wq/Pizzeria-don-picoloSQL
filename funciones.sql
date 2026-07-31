@@ -77,7 +77,7 @@ BEGIN
     WHERE id_domicilio = p_id_domicilio;
 
     UPDATE domicilios
-    SET hora_entrega = p_hora_entrega
+    SET hora_entrega = p_hora_entrega, estado = 'entregado'
     WHERE id_domicilio = p_id_domicilio;
 
     UPDATE pedidos
@@ -196,7 +196,7 @@ BEGIN
 
     SELECT id_repartidor INTO v_id_repartidor
     FROM repartidores
-    WHERE estado = 'disponible'
+    WHERE estado = 'activo'
     LIMIT 1;
 
     IF v_id_repartidor IS NULL THEN
@@ -205,11 +205,11 @@ BEGIN
     END IF;
 
     UPDATE repartidores
-    SET estado = 'no disponible'
+    SET estado = 'inactivo'
     WHERE id_repartidor = v_id_repartidor;
 
-    INSERT INTO domicilios (id_pedido, id_repartidor, hora_salida, distancia_km, costo_envio)
-    VALUES (p_id_pedido, v_id_repartidor, NOW(), p_distancia_km, p_costo_envio);
+    INSERT INTO domicilios (id_pedido, id_repartidor, hora_salida, distancia_km, costo_envio, estado)
+    VALUES (p_id_pedido, v_id_repartidor, NOW(), p_distancia_km, p_costo_envio, 'en_ruta');
 
     UPDATE pedidos
     SET estado = 'en camino'

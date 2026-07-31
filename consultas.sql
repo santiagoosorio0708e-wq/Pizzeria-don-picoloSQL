@@ -133,7 +133,7 @@ SELECT id_cliente, nombre, activo FROM clientes WHERE id_cliente = 4;
 
 SELECT * FROM vista_pedidos_pendientes_despacho;
 
-SELECT id_repartidor, nombre, estado FROM repartidores WHERE estado = 'disponible' LIMIT 1;
+SELECT id_repartidor, nombre, estado FROM repartidores WHERE estado = 'activo' LIMIT 1;
 
 CALL despachar_pedido(@nuevo_pedido_id, 4.20, 5000.00);
 
@@ -162,18 +162,19 @@ SELECT calcular_comision_repartidor(1, MONTH(NOW()), YEAR(NOW())) AS comisiones_
 
 
 -- Entregas realizadas por cada repartidor
--- Muestra el nombre, cantidad de entregas con estado 'entregado' y el total facturado en esos pedidos.
+-- Mostrar el nombre del repartidor, cantidad de entregas realizadas (estado='entregado'), y total acumulado de pedidos entregados.
 SELECT 
     r.nombre AS repartidor,
     COUNT(d.id_domicilio) AS entregas_realizadas,
     COALESCE(SUM(p.total_pedido), 0.00) AS total_acumulado_entregado
 FROM repartidores r
-LEFT JOIN domicilios d ON r.id_repartidor = d.id_repartidor
+LEFT JOIN domicilios d ON r.id_repartidor = d.id_repartidor AND d.estado = 'entregado'
 LEFT JOIN pedidos p ON d.id_pedido = p.id_pedido AND p.estado = 'entregado'
 GROUP BY r.id_repartidor, r.nombre;
 
 
--- Muestra los pedidos cuya entrega tomó más de 40 minutos entre hora_salida y hora_entrega.
+-- Pedidos demorados
+-- Mostrar los pedidos cuya entrega tomó más de 40 minutos entre hora_salida y hora_entrega
 SELECT 
     id_pedido,
     hora_salida,
@@ -184,14 +185,15 @@ WHERE hora_entrega IS NOT NULL
   AND TIMESTAMPDIFF(MINUTE, hora_salida, hora_entrega) > 40;
 
 
--- Muestra los repartidores con estado 'disponible' (activo) que no tienen ningún domicilio registrado en el sistema.
+-- Repartidores activos sin entregas
+-- Mostrar los repartidores con estado 'activo' que no tienen domicilios asignados (usa LEFT JOIN y WHERE domicilio.id_domicilio IS NULL).
 SELECT 
     r.id_repartidor,
     r.nombre,
     r.zona_asignada
 FROM repartidores r
 LEFT JOIN domicilios d ON r.id_repartidor = d.id_repartidor
-WHERE r.estado = 'disponible' 
+WHERE r.estado = 'activo' 
   AND d.id_domicilio IS NULL;
 
 

@@ -29,9 +29,9 @@ INSERT INTO pizza_ingredientes (id_pizza, id_ingrediente, cantidad) VALUES
 (3, 1, 2),
 (3, 2, 3);
 
-INSERT INTO repartidores (nombre, zona_asignada, estado) VALUES
-('Diego Torres', 'Zona Norte', 'disponible'),
-('Andres Mejia', 'Zona Sur', 'disponible');
+INSERT INTO repartidores (nombre, telefono, zona_asignada, estado) VALUES
+('Diego Torres', '555-4321', 'Zona Norte', 'activo'),
+('Andres Mejia', '555-8765', 'Zona Sur', 'activo');
 
 INSERT INTO pedidos (id_cliente, fecha_hora, metodo_pago, estado, total_pedido) VALUES
 (1, NOW() - INTERVAL 5 DAY, 'efectivo', 'entregado', 35000.00),
@@ -55,7 +55,7 @@ INSERT INTO pedido_pizzas (id_pedido, id_pizza, cantidad, precio_unitario) VALUE
 (7, 3, 1, 30000.00),
 (8, 2, 1, 25000.00);
 
-INSERT INTO domicilios (id_pedido, id_repartidor, hora_salida, hora_entrega, distancia_km, costo_envio) VALUES
-(1, 1, NOW() - INTERVAL 5 DAY - INTERVAL 30 MINUTE, NOW() - INTERVAL 5 DAY - INTERVAL 10 MINUTE, 3.5, 5000.00),
-(2, 2, NOW() - INTERVAL 3 DAY - INTERVAL 40 MINUTE, NOW() - INTERVAL 3 DAY - INTERVAL 15 MINUTE, 5.0, 7000.00),
-(3, 1, NOW() - INTERVAL 10 HOUR - INTERVAL 25 MINUTE, NOW() - INTERVAL 10 HOUR - INTERVAL 5 MINUTE, 2.0, 3000.00);
+INSERT INTO domicilios (id_pedido, id_repartidor, hora_salida, hora_entrega, distancia_km, costo_envio, estado) VALUES
+(1, 1, NOW() - INTERVAL 5 DAY - INTERVAL 30 MINUTE, NOW() - INTERVAL 5 DAY - INTERVAL 10 MINUTE, 3.5, 5000.00, 'entregado'),
+(2, 2, NOW() - INTERVAL 3 DAY - INTERVAL 40 MINUTE, NOW() - INTERVAL 3 DAY - INTERVAL 15 MINUTE, 5.0, 7000.00, 'entregado'),
+(3, 1, NOW() - INTERVAL 10 HOUR - INTERVAL 25 MINUTE, NOW() - INTERVAL 10 HOUR - INTERVAL 5 MINUTE, 2.0, 3000.00, 'entregado');

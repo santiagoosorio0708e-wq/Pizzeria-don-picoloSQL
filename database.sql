@@ -38,8 +38,9 @@ CREATE TABLE pizza_ingredientes (
 CREATE TABLE repartidores (
     id_repartidor INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
     zona_asignada VARCHAR(50) NOT NULL,
-    estado ENUM('disponible', 'no disponible') NOT NULL DEFAULT 'disponible'
+    estado ENUM('activo', 'inactivo') NOT NULL DEFAULT 'activo'
 );
 
 CREATE TABLE pedidos (
@@ -70,6 +71,7 @@ CREATE TABLE domicilios (
     hora_entrega DATETIME,
     distancia_km DECIMAL(5,2),
     costo_envio DECIMAL(10,2) NOT NULL,
+    estado ENUM('en_ruta', 'entregado', 'cancelado') NOT NULL DEFAULT 'en_ruta',
     FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido) ON DELETE CASCADE,
     FOREIGN KEY (id_repartidor) REFERENCES repartidores(id_repartidor)
 );

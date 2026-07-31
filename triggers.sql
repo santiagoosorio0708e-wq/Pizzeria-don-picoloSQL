@@ -26,9 +26,9 @@ CREATE TRIGGER tr_liberar_repartidor
 AFTER UPDATE ON domicilios
 FOR EACH ROW
 BEGIN
-    IF OLD.hora_entrega IS NULL AND NEW.hora_entrega IS NOT NULL THEN
+    IF OLD.estado <> NEW.estado AND NEW.estado = 'entregado' THEN
         UPDATE repartidores
-        SET estado = 'disponible'
+        SET estado = 'activo'
         WHERE id_repartidor = NEW.id_repartidor;
     END IF;
 END //
@@ -66,7 +66,7 @@ BEGIN
     IF OLD.estado <> NEW.estado AND NEW.estado = 'cancelado' THEN
         UPDATE repartidores r
         INNER JOIN domicilios d ON r.id_repartidor = d.id_repartidor
-        SET r.estado = 'disponible'
+        SET r.estado = 'activo'
         WHERE d.id_pedido = NEW.id_pedido;
 
         UPDATE ingredientes i
