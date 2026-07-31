@@ -156,15 +156,12 @@ SELECT calcular_descuento_cliente(1) AS descuento_cliente_comun;
 
 SELECT calcular_comision_repartidor(1, MONTH(NOW()), YEAR(NOW())) AS comisiones_repartidor_1;
 
--- =====================================================================
--- CONSULTAS ADICIONALES PARA CASOS DE NEGOCIO
--- =====================================================================
 
--- ---------------------------------------------------------------------
--- MÓDULO 1: SISTEMA DE DOMICILIOS Y REPARTIDORES
--- ---------------------------------------------------------------------
 
--- Consulta 1.1: Entregas realizadas por cada repartidor
+-- 1: SISTEMA DE DOMICILIOS Y REPARTIDORES
+
+
+-- Entregas realizadas por cada repartidor
 -- Muestra el nombre, cantidad de entregas con estado 'entregado' y el total facturado en esos pedidos.
 SELECT 
     r.nombre AS repartidor,
@@ -175,7 +172,7 @@ LEFT JOIN domicilios d ON r.id_repartidor = d.id_repartidor
 LEFT JOIN pedidos p ON d.id_pedido = p.id_pedido AND p.estado = 'entregado'
 GROUP BY r.id_repartidor, r.nombre;
 
--- Consulta 1.2: Pedidos demorados (más de 40 minutos)
+
 -- Muestra los pedidos cuya entrega tomó más de 40 minutos entre hora_salida y hora_entrega.
 SELECT 
     id_pedido,
@@ -186,7 +183,7 @@ FROM domicilios
 WHERE hora_entrega IS NOT NULL 
   AND TIMESTAMPDIFF(MINUTE, hora_salida, hora_entrega) > 40;
 
--- Consulta 1.3: Repartidores activos sin entregas asignadas
+
 -- Muestra los repartidores con estado 'disponible' (activo) que no tienen ningún domicilio registrado en el sistema.
 SELECT 
     r.id_repartidor,
@@ -198,11 +195,11 @@ WHERE r.estado = 'disponible'
   AND d.id_domicilio IS NULL;
 
 
--- ---------------------------------------------------------------------
--- MÓDULO 2: INVENTARIO, INGREDIENTES Y RECETAS
--- ---------------------------------------------------------------------
 
--- Consulta 2.1: Cantidad de ingredientes distintos utilizados por cada pizza
+--2: INVENTARIO, INGREDIENTES Y RECETAS
+
+
+--  Cantidad de ingredientes distintos utilizados por cada pizza
 SELECT 
     p.nombre AS pizza,
     p.tamano,
@@ -211,7 +208,7 @@ FROM pizzas p
 LEFT JOIN pizza_ingredientes pi ON p.id_pizza = pi.id_pizza
 GROUP BY p.id_pizza, p.nombre, p.tamano;
 
--- Consulta 2.2: Alerta de ingredientes con stock crítico
+-- Alerta de ingredientes con stock crítico
 SELECT 
     nombre AS ingrediente,
     stock AS stock_actual,
@@ -221,7 +218,7 @@ SELECT
 FROM ingredientes
 WHERE stock < stock_minimo;
 
--- Consulta 2.3: Ingredientes registrados sin asignar a ninguna pizza
+--  Ingredientes registrados sin asignar a ninguna pizza
 SELECT 
     i.id_ingrediente,
     i.nombre AS ingrediente_sin_uso
@@ -230,11 +227,11 @@ LEFT JOIN pizza_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
 WHERE pi.id_pizza IS NULL;
 
 
--- ---------------------------------------------------------------------
--- MÓDULO 3: MENÚ DE PIZZAS E HISTORIAL DE PRECIOS
--- ---------------------------------------------------------------------
 
--- Consulta 3.1: Resumen de precios por tipo y tamaño de pizza
+-- 3: MENÚ DE PIZZAS E HISTORIAL DE PRECIOS
+
+
+--  Resumen de precios por tipo y tamaño de pizza
 SELECT 
     tipo,
     tamano,
@@ -244,7 +241,7 @@ SELECT
 FROM pizzas
 GROUP BY tipo, tamano;
 
--- Consulta 3.2: Pizzas con incrementos de precio superiores a 5,000 en su historial
+--  Pizzas con incrementos de precio superiores a 5,000 en su historial
 SELECT 
     p.nombre AS pizza,
     hp.precio_anterior,
@@ -255,7 +252,7 @@ FROM historial_precios hp
 JOIN pizzas p ON hp.id_pizza = p.id_pizza
 WHERE (hp.precio_nuevo - hp.precio_anterior) > 5000.00;
 
--- Consulta 3.3: Pizzas del menú que nunca han sido vendidas
+-- Pizzas del menú que nunca han sido vendidas
 SELECT 
     p.id_pizza,
     p.nombre,
@@ -265,11 +262,11 @@ LEFT JOIN pedido_pizzas pp ON p.id_pizza = pp.id_pizza
 WHERE pp.id_pizza IS NULL;
 
 
--- ---------------------------------------------------------------------
--- MÓDULO 4: VENTAS Y FIDELIZACIÓN DE CLIENTES
--- ---------------------------------------------------------------------
 
--- Consulta 4.1: Ventas por cliente (pedidos entregados)
+--  VENTAS Y FIDELIZACIÓN DE CLIENTES
+
+
+-- Ventas por cliente (pedidos entregados)
 SELECT 
     c.nombre AS cliente,
     COUNT(p.id_pedido) AS total_pedidos_realizados,
@@ -278,7 +275,7 @@ FROM clientes c
 LEFT JOIN pedidos p ON c.id_cliente = p.id_cliente AND p.estado = 'entregado'
 GROUP BY c.id_cliente, c.nombre;
 
--- Consulta 4.2: Clientes VIP (gasto acumulado > 50,000)
+--  Clientes VIP (gasto acumulado > 50,000)
 SELECT 
     c.nombre AS cliente,
     SUM(p.total_pedido) AS gasto_total
@@ -288,7 +285,7 @@ WHERE p.estado = 'entregado'
 GROUP BY c.id_cliente, c.nombre
 HAVING gasto_total > 50000.00;
 
--- Consulta 4.3: Clientes registrados sin pedidos
+--  Clientes registrados sin pedidos
 SELECT 
     c.id_cliente,
     c.nombre AS cliente_sin_pedidos,

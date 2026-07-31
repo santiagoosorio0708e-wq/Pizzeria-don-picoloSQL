@@ -56,7 +56,7 @@ WHERE p.estado = 'entregado'
 GROUP BY YEAR(p.fecha_hora), MONTH(p.fecha_hora), MONTHNAME(p.fecha_hora), pz.id_pizza, pz.nombre
 ORDER BY anio DESC, MONTH(p.fecha_hora) DESC, unidades_vendidas DESC;
 
--- [MÓDULO 1] Vista: vista_desempeno_repartidor
+-- vista_desempeno_repartidor
 -- Muestra el nombre del repartidor, el total de entregas y el promedio en minutos de entrega.
 CREATE OR REPLACE VIEW vista_desempeno_repartidor AS
 SELECT 
@@ -68,7 +68,7 @@ JOIN domicilios d ON r.id_repartidor = d.id_repartidor
 WHERE d.estado = 'entregado' AND d.hora_entrega IS NOT NULL
 GROUP BY r.id_repartidor, r.nombre;
 
--- [MÓDULO 2] Vista: vista_inventario_critico
+-- vista_inventario_critico
 -- Muestra ingredientes bajo stock mínimo, su estado de alerta y cantidad sugerida de compra.
 CREATE OR REPLACE VIEW vista_inventario_critico AS
 SELECT 
@@ -83,7 +83,7 @@ SELECT
 FROM ingredientes
 WHERE stock < stock_minimo;
 
--- [MÓDULO 3] Vista: vista_resumen_precios
+-- vista_resumen_precios
 -- Muestra el precio actual de la pizza, la cantidad de cambios históricos y el promedio del incremento.
 CREATE OR REPLACE VIEW vista_resumen_precios AS
 SELECT 
@@ -96,6 +96,7 @@ FROM pizzas p
 LEFT JOIN historial_precios hp ON p.id_pizza = hp.id_pizza
 GROUP BY p.id_pizza, p.nombre, p.precio_base;
 
--- Nota: La [vista_resumen_clientes] requerida para el [MÓDULO 4] ya está implementada al inicio de este archivo.
+-- Nota: La vista_resumen_clientes requerida para VENTAS Y FIDELIZACIÓN DE CLIENTES ya está implementada al inicio de este archivo.
+
 
 
