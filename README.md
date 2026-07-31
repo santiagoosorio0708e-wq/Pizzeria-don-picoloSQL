@@ -305,13 +305,16 @@ A continuación se presentan las evidencias de las pruebas unitarias realizadas 
 ## Instrucciones para ejecutar el script
 1. Abre tu cliente de base de datos preferido (MySQL Workbench, DBeaver, o consola de MySQL).
 2. Conéctate a tu servidor MySQL.
-3. Ejecuta los scripts en el siguiente orden para evitar problemas de dependencias:
+3. Ejecuta los scripts en el siguiente orden para evitar problemas de dependencias (claves foráneas y disparadores):
    - `database.sql`
    - `funciones.sql`
    - `triggers.sql`
    - `vistas.sql`
    - `datos_prueba.sql` (para poblar la base de datos con información de pruebas)
    - `consultas.sql` (para probar el comportamiento de las consultas)
+
+> [!IMPORTANT]
+> **Nota sobre consultas.sql**: Para garantizar la correcta ejecución del script de inicio a fin sin fallas de reglas de negocio, las pruebas de despacho y cancelación utilizan la variable dinámica `@nuevo_pedido_id` (generada al registrar un nuevo pedido de prueba) en lugar de un ID estático. Esto evita errores causados por pedidos previamente entregados en los datos de prueba.
 
 ---
 
