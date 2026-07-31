@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS pizzeria_don_piccolo;
+DROP DATABASE IF EXISTS pizzeria_don_piccolo;
+CREATE DATABASE pizzeria_don_piccolo;
 USE pizzeria_don_piccolo;
 
 CREATE TABLE clientes (
